@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Comment Box</title>
+<style>
+body { font-family: Arial; margin: 40px; background: #f0f0f0; }
+.container { background: white; padding: 30px; border-radius: 8px; max-width: 600px; margin: auto; }
+textarea, button { margin: 10px 0; padding: 8px; width: 100%; }
+button { background: #cc0000; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.comment-box { background: #f9f9f9; padding: 15px; border-left: 4px solid #cc0000; margin-top: 15px; }
+a { color: #333; }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h2>💬 Leave a Comment</h2>
+        <form method="POST">
+            <textarea name="comment" rows="4" placeholder="Write your comment..."></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        {% if msg %}
+        <div class="comment-box">
+            <strong>Your comment:</strong><br>
+            {{ msg | safe }}
+        </div>
+        {% endif %}
+        <a href="/">← Back</a>
+    </div>
+</body>
+</html>
