@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 import os, subprocess, sqlite3
 import logging
-
 import urllib.request, json
+from datetime import datetime
+import re
 
 def send_to_splunk(message, sourcetype="flask_app"):
     try:
@@ -11,16 +12,14 @@ def send_to_splunk(message, sourcetype="flask_app"):
         data = json.dumps({"event": message, "sourcetype": sourcetype}).encode()
         req = urllib.request.Request(url, data=data, headers={"Authorization": f"Splunk {token}"})
         urllib.request.urlopen(req, timeout=2)
-    except Exception as e:
+    except:
         pass
-
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 logging.basicConfig(
     filename='/var/log/vulnerable_app.log',
@@ -33,41 +32,50 @@ def log_request():
     log_entry = f'{request.remote_addr} - [{datetime.now().strftime("%d/%b/%Y %H:%M:%S")}] "{request.method} {request.path} HTTP/1.1"'
     logging.info(log_entry)
     send_to_splunk(log_entry)
-# Send bash history to Splunk
-try:
-    with open('/var/log/bash_history.log', 'r') as f:
-        for line in f.readlines()[-5:]:
-            if line.strip():
-                send_to_splunk(line.strip(), sourcetype="bash_history")
-except:
-    pass
+    try:
+        with open('/var/log/bash_history.log', 'r') as f:
+            for line in f.readlines()[-5:]:
+                if line.strip():
+                    send_to_splunk(line.strip(), sourcetype="bash_history")
+    except:
+        pass
+
 # ========== HOME ==========
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# ========== 1. FILE UPLOAD (Vulnerable) ==========
+# ========== 1. FILE UPLOAD (FIXED) ==========
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     msg = ''
     if request.method == 'POST':
         f = request.files['file']
-        if f:
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+        if f and allowed_file(f.filename):
+            filename = os.path.basename(f.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             f.save(filepath)
-            msg = f'File uploaded: {f.filename}'
+            msg = f'File uploaded: {filename}'
+        else:
+            msg = 'Error: Only images and documents allowed!'
     return render_template('upload.html', msg=msg)
 
-# ========== 2. OS COMMAND INJECTION (Vulnerable) ==========
+# ========== 2. OS COMMAND INJECTION (FIXED) ==========
 @app.route('/ping', methods=['GET', 'POST'])
 def ping():
     output = ''
     if request.method == 'POST':
         host = request.form['host']
-        output = subprocess.getoutput(f'ping -c 1 {host}')
+        if re.match(r'^[a-zA-Z0-9.\-]+$', host):
+            output = subprocess.getoutput(f'ping -c 1 {host}')
+        else:
+            output = 'Error: Invalid host! Only alphanumeric characters allowed.'
     return render_template('ping.html', output=output)
 
-# ========== 3. XSS (Vulnerable) ==========
+# ========== 3. XSS (FIXED) ==========
 @app.route('/comment', methods=['GET', 'POST'])
 def comment():
     msg = ''
@@ -75,7 +83,7 @@ def comment():
         msg = request.form['comment']
     return render_template('comment.html', msg=msg)
 
-# ========== 4. SQL INJECTION (Vulnerable) ==========
+# ========== 4. SQL INJECTION (FIXED) ==========
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     msg = ''
@@ -83,8 +91,8 @@ def login():
         username = request.form['username']
         password = request.form['password']
         conn = sqlite3.connect('users.db')
-        query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
-        result = conn.execute(query).fetchone()
+        query = "SELECT * FROM users WHERE username=? AND password=?"
+        result = conn.execute(query, (username, password)).fetchone()
         if result:
             msg = f'Welcome {result[1]}!'
         else:
