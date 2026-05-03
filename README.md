@@ -34,12 +34,12 @@ The lab consists of three virtual machines simulating a target, attacker, and SI
 
 ## 👥 Team Roles
 
-| Role | Responsibilities |
+| Task | Responsibilities |
 |------|-----------------|
-| **Student 1** — Architecture & Visibility | Build lab, deploy vulnerable app, configure SIEM and log forwarding |
-| **Student 2** — Offensive Red Team | Perform black-box penetration test and achieve RCE |
-| **Student 3** — Defensive Blue Team / IR | Reconstruct attack timeline, containment, detection queries |
-| **Student 4** — Mitigation & Re-Exploitation | Apply code fixes, re-test exploits, manage Git versioning |
+| **Task 1** — Architecture & Visibility | Build lab, deploy vulnerable app, configure SIEM and log forwarding |
+| **Task 2** — Offensive Red Team | Perform black-box penetration test and achieve RCE |
+| **Task 3** — Defensive Blue Team / IR | Reconstruct attack timeline, containment, detection queries |
+| **Task 4** — Mitigation & Re-Exploitation | Apply code fixes, re-test exploits, manage Git versioning |
 
 ---
 
@@ -211,5 +211,5 @@ This project is for **educational purposes only**. The vulnerable code is intent
 - [Nmap Documentation](https://nmap.org/docs.html)
 
 ---
-
+*author : AbdaullahAbughallous
 *Developed as part of Masar-NCSC Cybersecurity Training Program — 2026*
