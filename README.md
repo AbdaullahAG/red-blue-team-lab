@@ -30,7 +30,7 @@ The lab consists of three virtual machines simulating a target, attacker, and SI
 └─────────────────┘         └─────────────────┘         └─────────────────┘
 ```
 
----
+--- 
 
 ## 👥 Team Roles
 
