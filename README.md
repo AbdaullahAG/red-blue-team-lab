@@ -14,7 +14,7 @@
 This project simulates a **complete real-world attack and defense lifecycle** in a controlled lab environment. It was developed as part of the **Masar-NCSC (National Cyber Security Center)** cybersecurity training program.
 
 The lab consists of three virtual machines simulating a target, attacker, and SIEM system. The project covers all phases from building a vulnerable application to attacking it, detecting the attacks, and remediating the vulnerabilities.
-
+ 
 ---
 
 ## 🏗️ Lab Architecture
