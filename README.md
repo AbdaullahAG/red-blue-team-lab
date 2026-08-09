@@ -1,6 +1,6 @@
 # 🔴🔵 Red/Blue Team Security Assessment Lab
 
-> **Educational Purpose Only** — This project contains intentionally vulnerable code for cybersecurity training.
+> **Educational Purpose Only** — This project contains intentionally vulnerable code for cybersecurity training. 
  
 [![Python](https://img.shields.io/badge/Python-3.x-blue)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-3.1.5-green)](https://flask.palletsprojects.com)
